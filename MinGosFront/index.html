@@ -49,10 +49,14 @@
                 actionCode: 'default',
               })
             });
-            this.result = await response.json();
+            if (response.ok) {
+              this.result = await response.json();
+            } else {
+              throw new Error('Error');
+            }
           } catch(err) {
             console.error('error', err);
-            this.error = err;
+            this.error = err.message;
           }
         }
       }
