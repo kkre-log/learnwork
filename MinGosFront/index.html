@@ -7,7 +7,7 @@
 <body>
   <div id="app">
     <button @click="loadFormats">Загрузить форматы</button>
-    <div v-for="(d, i) in result?.data.row" :key="i">
+    <div v-for="(d, i) in result?.data?.row" :key="i">
           <div>{{ d.formatCode }}</div>
           <div>{{ d.formatName }}</div>
     </div>
