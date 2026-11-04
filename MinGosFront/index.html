@@ -33,60 +33,13 @@
   <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
   <script>
 
-    Vue.component('mini-form', {
-      props: {
-        windowCode: String,
-        actionCode: String,
-        actionType: String,
-        autoLoad: { type: Boolean, default: true },
-      },
-      data() {
-        return {
-          result: null,
-          error: null,
-          loading: false,
-        }
-      },
-      methods: {
-        async load() {
-          try {
-            this.error = null;
-            this.result = null;
-            this.loading = true;
+    let settings = {};
 
-            const response = await fetch(this.apiBaseUrl + '/Processing/main', {
-              method: 'POST',
-              headers: { 
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                windowCode,
-                actionType,
-                actionCode,
-              })
-            });
-  
-          if (response.ok) {
-              return response.json()
-            } else {
-              throw new Error(`Сервер ответил: ${response.status}`);
-            }
-            
-          } catch (err) {
-            this.error = err.message;
-          } finally {
-            this.loading = false;
-          }
-        },
-      },
-      template: `
-        <div>
-          <slot :result="result" :error="error" :loading="loading" :reload="load"></slot>
-        </div>
-      `
-    })
+    async function startApp() {
+      const response = await fetch('config.json');
+      settings = await response.json();
 
-    new Vue({
+      new Vue({
       el: '#app',
       data() {
         return {
@@ -144,6 +97,64 @@
       },
 
     })
+    }
+
+    startApp();
+
+    Vue.component('mini-form', {
+      props: {
+        windowCode: String,
+        actionCode: String,
+        actionType: String,
+        autoLoad: { type: Boolean, default: true },
+      },
+      data() {
+        return {
+          result: null,
+          error: null,
+          loading: false,
+        }
+      },
+      methods: {
+        async load() {
+          try {
+            this.error = null;
+            this.result = null;
+            this.loading = true;
+
+            const response = await fetch(settings.API_BASE_URL + '/Processing/main', {
+              method: 'POST',
+              headers: { 
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                windowCode: this.windowCode,
+                actionType: this.actionType,
+                actionCode: this.actionCode,
+              })
+            });
+  
+          if (response.ok) {
+              this.result = await response.json()
+            } else {
+              throw new Error(`Сервер ответил: ${response.status}`);
+            }
+            
+          } catch (err) {
+            this.error = err.message;
+          } finally {
+            this.loading = false;
+          }
+        },
+      },
+      template: `
+        <div>
+          <slot :result="result" :error="error" :loading="loading" :reload="load"></slot>
+        </div>
+      `
+    })
+
+    
   </script>
 </body>
 </html>
