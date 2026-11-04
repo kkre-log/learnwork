@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>MinGos Front</title>
+</head>
+<body>
+  <div id="app">
+    <button @click="loadFormats">Загрузить форматы</button>
+    <pre>{{ result }}</pre>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      data() {
+        return {
+          apiBaseUrl: '',
+          result: null
+        }
+      },
+      async created() {
+        const response = await fetch('config.json');
+        const config = await response.json();
+        this.apiBaseUrl = config.API_BASE_URL;
+      },
+      methods: {
+        async loadFormats() {
+          const response = await fetch(this.apiBaseUrl + '/Processing/main', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              windowCode: '/Seminars/GetSeminarFormats',
+              actionType: 'MONITOR',
+              actionCode: 'default',
+            })
+          });
+          this.result = await response.json();
+        }
+      }
+    })
+  </script>
+</body>
+</html>
