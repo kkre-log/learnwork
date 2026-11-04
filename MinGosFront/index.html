@@ -18,10 +18,41 @@
     <div v-if="error">
       {{ error }}
     </div>
+
+    <mini-form window-code="/Seminars/GetSeminarFormats" action-type="MONITOR" action-code="default">
+      <template #default="{ result, error, loading }">
+        <div>loading {{ loading }}</div>
+        <div>error {{ error }}</div>
+        <div>result {{ result }}</div>
+      </template>
+    </mini-form>
+
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
   <script>
+
+    Vue.component('mini-form', {
+      props: {
+        windowCode: String,
+        actionCode: String,
+        actionType: String,
+        autoLoad: { type: Boolean, default: true },
+      },
+      data() {
+        return {
+          result: null,
+          error: null,
+          loading: false,
+        }
+      },
+      template: `
+        <div>
+          <slot :result="result" :error="error" :loading="loading"></slot>
+        </div>
+      `
+    })
+
     new Vue({
       el: '#app',
       data() {
