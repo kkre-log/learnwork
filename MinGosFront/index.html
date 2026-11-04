@@ -7,13 +7,9 @@
 <body>
   <div id="app">
     <button @click="loadFormats">Загрузить форматы</button>
-    <div v-for="(d, i) in result" :key="i">
-      <div v-for="(r, i) in d">
-        <div v-for="(z, i) in r" :key="i">
-          <div>{{ z.formatCode }}</div>
-          <div>{{ z.formatName }}</div>
-        </div>
-      </div>
+    <div v-for="(d, i) in result?.data.row" :key="i">
+          <div>{{ d.formatCode }}</div>
+          <div>{{ d.formatName }}</div>
     </div>
     <div v-if="error">
       {{ error }}
