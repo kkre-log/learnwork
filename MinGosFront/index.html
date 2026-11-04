@@ -41,6 +41,7 @@
         async loadFormats() {
           try {
             this.error = null;
+            this.result = null;
             const response = await fetch(this.apiBaseUrl + '/Processing/main', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json'},
