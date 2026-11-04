@@ -8,6 +8,9 @@
   <div id="app">
     <button @click="loadProcessingMain('/Seminars/GetSeminarFormats', 'MONITOR', 'default')">Загрузить форматы</button>
     <button @click="loadProcessingMain('/Nothing', 'MONITOR', 'default')">Загрузить ничего</button>
+    <div v-if="loading">
+      Идет загрузка
+    </div>
     <div v-for="(d, i) in result?.data?.row" :key="i">
           <div>{{ d.formatCode }}</div>
           <div>{{ d.formatName }}</div>
@@ -25,7 +28,8 @@
         return {
           apiBaseUrl: '',
           result: null,
-          error: null
+          error: null,
+          loading: false,
         }
       },
       async created() {
@@ -43,11 +47,15 @@
            try {
             this.error = null;
             this.result = null;
+            this.loading = true;
 
             this.result = await this.sendProcessing(windowCode, actionType, actionCode);
           } catch(err) {
             console.error('error', err);
             this.error = err.message;
+            this.loading = false;
+          } finally {
+            this.loading = false;
           }
         },
 
