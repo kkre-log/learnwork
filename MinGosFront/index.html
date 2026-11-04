@@ -20,10 +20,11 @@
     </div>
 
     <mini-form window-code="/Seminars/GetSeminarFormats" action-type="MONITOR" action-code="default">
-      <template #default="{ result, error, loading }">
-        <div>loading {{ loading }}</div>
-        <div>error {{ error }}</div>
-        <div>result {{ result }}</div>
+      <template #default="{ result, error, loading, reload }">
+        <button @click="reload">Проверить load</button>
+        <div>loading: {{ loading }}</div>
+        <div>error: {{ error }}</div>
+        <div>result: {{ result }}</div>
       </template>
     </mini-form>
 
@@ -46,9 +47,41 @@
           loading: false,
         }
       },
+      methods: {
+        async load() {
+          try {
+            this.error = null;
+            this.result = null;
+            this.loading = true;
+
+            const response = await fetch(this.apiBaseUrl + '/Processing/main', {
+              method: 'POST',
+              headers: { 
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                windowCode,
+                actionType,
+                actionCode,
+              })
+            });
+  
+          if (response.ok) {
+              return response.json()
+            } else {
+              throw new Error(`Сервер ответил: ${response.status}`);
+            }
+            
+          } catch (err) {
+            this.error = err.message;
+          } finally {
+            this.loading = false;
+          }
+        },
+      },
       template: `
         <div>
-          <slot :result="result" :error="error" :loading="loading"></slot>
+          <slot :result="result" :error="error" :loading="loading" :reload="load"></slot>
         </div>
       `
     })
