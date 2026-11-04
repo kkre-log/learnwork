@@ -7,7 +7,7 @@
 <body>
   <div id="app">
     <button @click="loadFormats">Загрузить форматы</button>
-    <button @click="loadFormats">Загрузить форматы 2</button>
+    <button @click="loadNothing">Загрузить ничего</button>
     <div v-for="(d, i) in result?.data?.row" :key="i">
           <div>{{ d.formatCode }}</div>
           <div>{{ d.formatName }}</div>
@@ -39,6 +39,17 @@
         }
       },
       methods: {
+        async loadNothing() {
+           try {
+            this.error = null;
+            this.result = null;
+
+            this.result = await this.sendProcessing('/Nothing', 'MONITOR', 'default');
+          } catch(err) {
+            console.error('error', err);
+            this.error = err.message;
+          }
+        },
         async loadFormats() {
           try {
             this.error = null;
@@ -65,7 +76,7 @@
           });
   
           if (response.ok) {
-            return await response.json()
+            return response.json()
           } else {
             throw new Error(`Сервер ответил: ${response.status}`);
           }
