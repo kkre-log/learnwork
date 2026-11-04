@@ -42,26 +42,35 @@
           try {
             this.error = null;
             this.result = null;
-            const response = await fetch(this.apiBaseUrl + '/Processing/main', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json'},
-              body: JSON.stringify({
-                windowCode: '/Seminars/GetSeminarFormats',
-                actionType: 'MONITOR',
-                actionCode: 'default',
-              })
-            });
-            if (response.ok) {
-              this.result = await response.json();
-            } else {
-              throw new Error(`Сервер ответил: ${response.status}`);
-            }
+
+            this.result = await this.sendProcessing('/Seminars/GetSeminarFormats', 'MONITOR', 'default');
           } catch(err) {
             console.error('error', err);
             this.error = err.message;
           }
+        },
+
+        async sendProcessing(windowCode, actionType, actionCode) {
+          const response = await fetch(this.apiBaseUrl + '/Processing/main', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json'
+             },
+            body: JSON.stringify({
+              windowCode,
+              actionType,
+              actionCode,
+            })
+          });
+  
+          if (response.ok) {
+            return await response.json()
+          } else {
+            throw new Error(`Сервер ответил: ${response.status}`);
+          }
         }
-      }
+      },
+
     })
   </script>
 </body>
